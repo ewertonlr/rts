@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Build and Run Godot",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "godot-csharp-build", // Referenciando o novo label
+            "program": "C:/Users/Gamer/Desktop/GameDev/Godot_v4.5-stable_mono_win64/Godot_v4.5-stable_mono_win64/Godot_v4.5-stable_mono_win64.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "args":["--path", "${workspaceRoot}"]
+        }
+    ]
+}
