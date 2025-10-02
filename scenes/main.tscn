@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgnajk7k8rksn"]
+[gd_scene load_steps=3 format=3 uid="uid://cgnajk7k8rksn"]
 
 [ext_resource type="Script" uid="uid://bitjd4wmk3rmv" path="res://scripts/Main.cs" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://4rrskhxjuiyf" path="res://scenes/selection_manager.tscn" id="2_0wfyh"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_o5qli")
+
+[node name="SelectionManager" parent="." instance=ExtResource("2_0wfyh")]

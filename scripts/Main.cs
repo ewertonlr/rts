@@ -7,6 +7,6 @@ public partial class Main : Node2D
 
     public override void _Ready()
     {
-        if (_debug) Log.Debug("Log Test.");
+        // if (_debug) Log.Debug("Log Test.");
     }
 }

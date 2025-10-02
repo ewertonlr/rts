@@ -22,10 +22,10 @@ public partial class Unit : CharacterBody2D
 
         MoveAndSlide();
 
-        if (GlobalPosition.DistanceTo(nextPathPosition) < 5f) // Threshold to consider reaching the point
-        {
-            navigationAgent.Advance();
-        }
+        // if (GlobalPosition.DistanceTo(nextPathPosition) < 5f) // Threshold to consider reaching the point
+        // {
+        //     navigationAgent.Advance();
+        // }
     }
 
     public void MoveTo(Vector2 targetPosition)
