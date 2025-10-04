@@ -15,6 +15,14 @@ run/main_scene="uid://cgnajk7k8rksn"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameManager="*res://scripts/GameManager.cs"
+
 [dotnet]
 
 project/assembly_name="RTS"
+
+[global_group]
+
+units=""

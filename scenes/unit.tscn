@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://b42ek7rmo23nq"]
+[gd_scene load_steps=3 format=3 uid="uid://b42ek7rmo23nq"]
 
 [ext_resource type="Script" uid="uid://8gqantmofepg" path="res://scripts/Unit.cs" id="1_o7ajc"]
 
-[node name="Unit" type="Node2D"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_o7ajc"]
+
+[node name="Unit" type="CharacterBody2D" groups=["units"]]
 script = ExtResource("1_o7ajc")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(1.25, 1.25)
+scale = Vector2(32, 32)
+texture = SubResource("PlaceholderTexture2D_o7ajc")
