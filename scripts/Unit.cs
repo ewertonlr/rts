@@ -15,6 +15,9 @@ public partial class Unit : CharacterBody2D
     private Sprite2D sprite;
     private Area2D attackRange;
     private CollisionShape2D attackRangecollisionShape;
+    private Timer attackInvervalTimer;
+
+
     private Unit targetUnit;
 
     public enum BehaviorState
@@ -29,6 +32,10 @@ public partial class Unit : CharacterBody2D
     [Export(PropertyHint.Range, "1,2")]
     public int teamID = 1;
     private float attackRangeRadius = 0f;
+    private float defaultAttackInterval = 1.0f;
+
+    private int health = 100;
+    private int attackDamage = 10;
 
     public override void _Ready()
     {
@@ -44,6 +51,10 @@ public partial class Unit : CharacterBody2D
         CircleShape2D circleShape = attackRangecollisionShape.Shape as CircleShape2D;
         this.attackRangeRadius = circleShape.Radius;
 
+        attackInvervalTimer = GetNode<Timer>("AttackIntervalTimer");
+        attackInvervalTimer.WaitTime = defaultAttackInterval;
+        attackInvervalTimer.Timeout += OnAttackIntervalTimeout;
+
         Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
@@ -57,7 +68,7 @@ public partial class Unit : CharacterBody2D
             if (GlobalPosition.DistanceTo(targetUnit.GlobalPosition) <= attackRangeRadius)
             {
                 Velocity = Vector2.Zero;
-                // TODO: Attack aqui
+                TryAttack();
                 return;
             }
             MoveTo(targetUnit.GlobalPosition);
@@ -104,13 +115,11 @@ public partial class Unit : CharacterBody2D
             targetUnit = null;
         }
     }
-
     public void MoveTo(Vector2 targetPosition)
     {
         navigationAgent.TargetPosition = targetPosition;
         // Log.Info($"Unit {this} navigation position {targetPosition}");
     }
-
     public void SetTargetUnit(Unit targetUnit)
     {
         this.targetUnit = targetUnit;
@@ -118,6 +127,33 @@ public partial class Unit : CharacterBody2D
         SetBehaviorState(BehaviorState.Attacking);
 
         Log.Info($"Unit {this} set target to {targetUnit}");
+    }
+    public void TryAttack()
+    {
+        if (targetUnit != null)
+        {
+            targetUnit.ReceiveDamage(attackDamage);
+            Log.Info($"Unit {this} from Team {this.teamID} attacking Unit {targetUnit} from Team {targetUnit.teamID}!");
+            attackInvervalTimer.Start();
+        }
+    }
+    public void ReceiveDamage(int damage)
+    {
+        health -= damage;
+        Log.Info($"Unit {this} received {damage} damage, health now {health}");
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+    public void Die()
+    {
+        Log.Info($"Unit {this} died.");
+        QueueFree();
+    }
+    private void OnAttackIntervalTimeout()
+    {
+        TryAttack();
     }
     private void OnAttackRangeBodyEntered(Node2D body)
     {
