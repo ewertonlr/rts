@@ -35,7 +35,7 @@ public partial class SelectionManager : Control
                 selectionRect.Color = new Color(Colors.Blue, 0.4f);
                 AddChild(selectionRect);
 
-                Log.Debug("Left mouse button clicked at position: " + startDraggingPosition);
+                // Log.Debug("Left mouse button clicked at position: " + startDraggingPosition);
 
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Left && !mouseEvent.Pressed)
@@ -54,17 +54,17 @@ public partial class SelectionManager : Control
                     if (finalRect.HasPoint(unit.GlobalPosition))
                     {
                         GameManager.Instance.AddUnit(unit);
-                        Log.Info($"Unit {unit} is within the selection rectangle, adding to the selection list.");
+                        // Log.Info($"Unit {unit} is within the selection rectangle, adding to the selection list.");
                     }
                 });
 
-                Log.Info($"Unit List has {GameManager.Instance.AllUnits.Count} units after the selection.");
+                // Log.Info($"Unit List has {GameManager.Instance.AllUnits.Count} units after the selection.");
 
                 isDragging = false;
                 selectionRect?.QueueFree();
                 selectionRect = null;
 
-                Log.Debug("Left mouse button released at position: " + GetGlobalMousePosition());
+                // Log.Debug("Left mouse button released at position: " + GetGlobalMousePosition());
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Right && mouseEvent.Pressed)
             {
@@ -83,7 +83,7 @@ public partial class SelectionManager : Control
 
                     unit.MoveTo(moveToPosition);
 
-                    Log.Info($"Moving unit {unit} to position {moveToPosition}");
+                    // Log.Info($"Moving unit {unit} to position {moveToPosition}");
                 }
             }
         }
@@ -98,8 +98,7 @@ public partial class SelectionManager : Control
                 selectionRect.GlobalPosition = minPos;
                 selectionRect.Size = (currentMousePosition - startDraggingPosition).Abs();
 
-                Log.Debug("Dragging... Current selection rectangle: " + selectionRect);
-                // Update selection rectangle visual here
+                // Log.Debug("Dragging... Current selection rectangle: " + selectionRect);
 
             }
         }

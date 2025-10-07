@@ -1,8 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://b42ek7rmo23nq"]
+[gd_scene load_steps=5 format=3 uid="uid://b42ek7rmo23nq"]
 
 [ext_resource type="Script" uid="uid://8gqantmofepg" path="res://scripts/Unit.cs" id="1_o7ajc"]
+[ext_resource type="Texture2D" uid="uid://dhuy3j2atec8i" path="res://assets/BlueSquare32.png" id="2_k673f"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_o7ajc"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_k673f"]
+radius = 17.029387
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o7ajc"]
+radius = 68.007355
 
 [node name="Unit" type="CharacterBody2D" groups=["units"]]
 script = ExtResource("1_o7ajc")
@@ -10,6 +15,13 @@ script = ExtResource("1_o7ajc")
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(1.25, 1.25)
-scale = Vector2(32, 32)
-texture = SubResource("PlaceholderTexture2D_o7ajc")
+texture = ExtResource("2_k673f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_k673f")
+
+[node name="AttackRange" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource("CircleShape2D_o7ajc")
