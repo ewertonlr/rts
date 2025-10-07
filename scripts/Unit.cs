@@ -14,6 +14,15 @@ public partial class Unit : CharacterBody2D
     private NavigationAgent2D navigationAgent;
     private Sprite2D sprite;
     private Area2D attackRange;
+    private Unit targetUnit;
+
+    public enum BehaviorState
+    {
+        Idle,
+        Moving,
+        Attacking
+    }
+    public BehaviorState behaviorState = BehaviorState.Idle;
 
 
     [Export(PropertyHint.Range, "1,2")]
@@ -35,14 +44,30 @@ public partial class Unit : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        if (GlobalPosition.DistanceTo(navigationAgent.TargetPosition) < 10f) // Threshold to consider reaching the point
-        {
-            Velocity = Vector2.Zero;
+        if (behaviorState == BehaviorState.Idle)
             return;
+
+        if (GlobalPosition.DistanceTo(navigationAgent.TargetPosition) < 10f || navigationAgent.IsNavigationFinished())
+        {
+            if (behaviorState == BehaviorState.Moving)
+            {
+                SetBehaviorState(BehaviorState.Idle);
+                Log.Info($"Unit {this} from TeamID {this.teamID} has reached the threshold distance and/or finished its navigation!");
+                Log.Info($"Unit {this} from TeamID {this.teamID} entering in Idle state!");
+                return;
+            }
+            else if (behaviorState == BehaviorState.Attacking)
+            {
+                MoveTo(targetUnit.GlobalPosition);
+            }
         }
 
-        if (navigationAgent.IsNavigationFinished())
-            return;
+        ProcessMovement();
+
+    }
+
+    private void ProcessMovement()
+    {
 
         Vector2 nextPathPosition = navigationAgent.GetNextPathPosition();
 
@@ -58,10 +83,16 @@ public partial class Unit : CharacterBody2D
         Velocity = direction * speed;
 
         MoveAndSlide();
+    }
+    public void SetBehaviorState(BehaviorState newState)
+    {
+        behaviorState = newState;
 
-        // Log.Info($"Unit {this} moving to {direction} at position {GlobalPosition}");
-
-
+        if (behaviorState == BehaviorState.Idle)
+        {
+            Velocity = Vector2.Zero;
+            targetUnit = null;
+        }
     }
 
     public void MoveTo(Vector2 targetPosition)
@@ -70,11 +101,20 @@ public partial class Unit : CharacterBody2D
         // Log.Info($"Unit {this} navigation position {targetPosition}");
     }
 
+    public void SetTargetUnit(Unit targetUnit)
+    {
+        this.targetUnit = targetUnit;
+        // MoveTo(targetUnit.GlobalPosition);
+        SetBehaviorState(BehaviorState.Attacking);
+
+        Log.Info($"Unit {this} set target to {targetUnit}");
+    }
     private void OnAttackRangeBodyEntered(Node2D body)
     {
-        // Log.Info($"Unit {this} from Team {this.teamID} detected body {body} in attack range.");
         if (body is not Unit unit || unit.teamID == this.teamID)
             return;
+
+        SetTargetUnit(unit);
 
         Log.Info($"Unit {this} from Team {this.teamID} detected body {unit} from Team {unit.teamID} in attack range.");
     }

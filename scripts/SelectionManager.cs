@@ -82,6 +82,7 @@ public partial class SelectionManager : Control
                     Vector2 moveToPosition = targetPosition + gridOffset;
 
                     unit.MoveTo(moveToPosition);
+                    unit.SetBehaviorState(Unit.BehaviorState.Moving);
 
                     // Log.Info($"Moving unit {unit} to position {moveToPosition}");
                 }
