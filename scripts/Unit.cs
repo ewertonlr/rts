@@ -14,6 +14,7 @@ public partial class Unit : CharacterBody2D
     private NavigationAgent2D navigationAgent;
     private Sprite2D sprite;
     private Area2D attackRange;
+    private CollisionShape2D attackRangecollisionShape;
     private Unit targetUnit;
 
     public enum BehaviorState
@@ -27,7 +28,7 @@ public partial class Unit : CharacterBody2D
 
     [Export(PropertyHint.Range, "1,2")]
     public int teamID = 1;
-
+    private float attackRangeRadius = 0f;
 
     public override void _Ready()
     {
@@ -39,6 +40,10 @@ public partial class Unit : CharacterBody2D
         attackRange = GetNode<Area2D>("AttackRange");
         attackRange.BodyEntered += OnAttackRangeBodyEntered;
 
+        attackRangecollisionShape = attackRange.GetNode<CollisionShape2D>("CollisionShape2D");
+        CircleShape2D circleShape = attackRangecollisionShape.Shape as CircleShape2D;
+        this.attackRangeRadius = circleShape.Radius;
+
         Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
@@ -47,23 +52,28 @@ public partial class Unit : CharacterBody2D
         if (behaviorState == BehaviorState.Idle)
             return;
 
-        if (GlobalPosition.DistanceTo(navigationAgent.TargetPosition) < 10f || navigationAgent.IsNavigationFinished())
+        if (behaviorState == BehaviorState.Attacking && targetUnit != null)
         {
-            if (behaviorState == BehaviorState.Moving)
+            if (GlobalPosition.DistanceTo(targetUnit.GlobalPosition) <= attackRangeRadius)
             {
-                SetBehaviorState(BehaviorState.Idle);
-                Log.Info($"Unit {this} from TeamID {this.teamID} has reached the threshold distance and/or finished its navigation!");
-                Log.Info($"Unit {this} from TeamID {this.teamID} entering in Idle state!");
+                Velocity = Vector2.Zero;
+                // TODO: Attack aqui
                 return;
             }
-            else if (behaviorState == BehaviorState.Attacking)
+            MoveTo(targetUnit.GlobalPosition);
+        }
+
+        if (behaviorState == BehaviorState.Moving)
+        {
+            if (GlobalPosition.DistanceTo(navigationAgent.TargetPosition) < 1f || navigationAgent.IsNavigationFinished())
             {
-                MoveTo(targetUnit.GlobalPosition);
+                SetBehaviorState(BehaviorState.Idle);
+                Log.Info($"Unit {this} from TeamID {this.teamID} entering in Idle state!");
+                return;
             }
         }
 
         ProcessMovement();
-
     }
 
     private void ProcessMovement()
@@ -104,7 +114,7 @@ public partial class Unit : CharacterBody2D
     public void SetTargetUnit(Unit targetUnit)
     {
         this.targetUnit = targetUnit;
-        // MoveTo(targetUnit.GlobalPosition);
+        MoveTo(targetUnit.GlobalPosition);
         SetBehaviorState(BehaviorState.Attacking);
 
         Log.Info($"Unit {this} set target to {targetUnit}");
