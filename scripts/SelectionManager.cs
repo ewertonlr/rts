@@ -54,6 +54,7 @@ public partial class SelectionManager : Control
                     if (finalRect.HasPoint(unit.GlobalPosition))
                     {
                         GameManager.Instance.AddUnit(unit);
+                        unit.SetSelected(true);
                         // Log.Info($"Unit {unit} is within the selection rectangle, adding to the selection list.");
                     }
                 });

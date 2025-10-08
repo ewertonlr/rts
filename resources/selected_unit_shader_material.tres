@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dl1y5lpixpx78"]
+
+[ext_resource type="Shader" uid="uid://ctxsi0608intk" path="res://resources/selected_unit_shader_material.gdshader" id="1_0bvwi"]
+[ext_resource type="Texture2D" uid="uid://dhuy3j2atec8i" path="res://assets/BlueSquare32.png" id="2_wq005"]
+
+[resource]
+shader = ExtResource("1_0bvwi")
+shader_parameter/outline_size = 1.0
+shader_parameter/outline_color = Color(1, 1, 0, 1)
+shader_parameter/albedo_texture = ExtResource("2_wq005")

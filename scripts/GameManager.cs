@@ -34,9 +34,10 @@ public partial class GameManager : Node
 
     public void RemoveUnit(Unit unit)
     {
-        if (AllUnits.Contains(unit))
+        if (AllUnits.Contains(unit) && IsInstanceValid(unit))
         {
             AllUnits.Remove(unit);
+            // unit.SetSelected(false);
             Log.Info($"Unidade {unit} removida. Total de unidades: {AllUnits.Count}");
         }
         else
@@ -47,7 +48,22 @@ public partial class GameManager : Node
 
     public void RemoveAllUnits()
     {
+        UnselectAllUnits();
         AllUnits.Clear();
         Log.Info("Todas as unidades foram removidas.");
+    }
+
+    public void UnselectAllUnits()
+    {
+        foreach (var unit in AllUnits)
+        {
+            if (IsInstanceValid(unit))
+                unit.SetSelected(false);
+        }
+    }
+
+    public void OnUnitDied(Unit unit)
+    {
+        RemoveUnit(unit);
     }
 }

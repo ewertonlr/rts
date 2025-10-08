@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://b42ek7rmo23nq"]
+[gd_scene load_steps=6 format=3 uid="uid://b42ek7rmo23nq"]
 
 [ext_resource type="Script" uid="uid://8gqantmofepg" path="res://scripts/Unit.cs" id="1_o7ajc"]
 [ext_resource type="Texture2D" uid="uid://dhuy3j2atec8i" path="res://assets/BlueSquare32.png" id="2_k673f"]
+[ext_resource type="PackedScene" uid="uid://bj0c7fvun52bs" path="res://scenes/unit_selected_indicator.tscn" id="3_1jvru"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k673f"]
 radius = 17.029387
@@ -15,12 +16,15 @@ script = ExtResource("1_o7ajc")
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+use_parent_material = true
 texture = ExtResource("2_k673f")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("CircleShape2D_k673f")
 
 [node name="AttackRange" type="Area2D" parent="."]
+visible = false
 collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
@@ -28,3 +32,6 @@ shape = SubResource("CircleShape2D_o7ajc")
 
 [node name="AttackIntervalTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="UnitSelectedIndicator" parent="." instance=ExtResource("3_1jvru")]
+visible = false

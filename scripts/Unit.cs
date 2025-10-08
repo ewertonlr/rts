@@ -3,6 +3,9 @@ using System;
 
 public partial class Unit : CharacterBody2D
 {
+    [Signal]
+    public delegate void DiedEventHandler(Unit deadUnit);
+
     private const string AllyTextureUID = "uid://dhuy3j2atec8i";
     private const string EnemyTextureUID = "uid://dp01wsppv1ocb";
 
@@ -13,6 +16,7 @@ public partial class Unit : CharacterBody2D
 
     private NavigationAgent2D navigationAgent;
     private Sprite2D sprite;
+    private Sprite2D unitSelctedIndicator;
     private Area2D attackRange;
     private CollisionShape2D attackRangecollisionShape;
     private Timer attackInvervalTimer;
@@ -44,6 +48,8 @@ public partial class Unit : CharacterBody2D
         sprite = GetNode<Sprite2D>("Sprite2D");
         sprite.Texture = teamID == 1 ? AllyTexture : EnemyTexture;
 
+        unitSelctedIndicator = GetNode<Sprite2D>("UnitSelectedIndicator");
+
         attackRange = GetNode<Area2D>("AttackRange");
         attackRange.BodyEntered += OnAttackRangeBodyEntered;
 
@@ -55,6 +61,9 @@ public partial class Unit : CharacterBody2D
         attackInvervalTimer.WaitTime = defaultAttackInterval;
         attackInvervalTimer.Timeout += OnAttackIntervalTimeout;
 
+        if (GameManager.Instance != null)
+            Died += GameManager.Instance.OnUnitDied;
+
         Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
@@ -65,6 +74,13 @@ public partial class Unit : CharacterBody2D
 
         if (behaviorState == BehaviorState.Attacking && targetUnit != null)
         {
+            if (!IsInstanceValid(targetUnit))
+            {
+                this.targetUnit = null;
+                SetBehaviorState(BehaviorState.Idle);
+                return;
+            }
+
             if (GlobalPosition.DistanceTo(targetUnit.GlobalPosition) <= attackRangeRadius)
             {
                 Velocity = Vector2.Zero;
@@ -128,13 +144,23 @@ public partial class Unit : CharacterBody2D
 
         Log.Info($"Unit {this} set target to {targetUnit}");
     }
+
+    public void SetSelected(bool isSelected)
+    {
+        unitSelctedIndicator.Visible = isSelected;
+    }
     public void TryAttack()
     {
-        if (targetUnit != null)
+        if (IsInstanceValid(targetUnit))
         {
             targetUnit.ReceiveDamage(attackDamage);
             Log.Info($"Unit {this} from Team {this.teamID} attacking Unit {targetUnit} from Team {targetUnit.teamID}!");
             attackInvervalTimer.Start();
+        }
+        else
+        {
+            this.targetUnit = null;
+            SetBehaviorState(BehaviorState.Idle);
         }
     }
     public void ReceiveDamage(int damage)
@@ -149,6 +175,7 @@ public partial class Unit : CharacterBody2D
     public void Die()
     {
         Log.Info($"Unit {this} died.");
+        EmitSignal(SignalName.Died, this);
         QueueFree();
     }
     private void OnAttackIntervalTimeout()
