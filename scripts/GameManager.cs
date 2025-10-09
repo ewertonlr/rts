@@ -34,7 +34,7 @@ public partial class GameManager : Node
 
     public void RemoveUnit(Unit unit)
     {
-        if (AllUnits.Contains(unit) && IsInstanceValid(unit))
+        if (AllUnits.Contains(unit))
         {
             AllUnits.Remove(unit);
             // unit.SetSelected(false);
