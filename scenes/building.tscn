@@ -1,15 +1,17 @@
 [gd_scene load_steps=4 format=3 uid="uid://757kle2ca63q"]
 
 [ext_resource type="Script" uid="uid://ceqgdj58lyivj" path="res://scenes/Building.cs" id="1_n8bkc"]
-[ext_resource type="PackedScene" uid="uid://b42ek7rmo23nq" path="res://scenes/unit.tscn" id="2_ejq8p"]
 [ext_resource type="Texture2D" uid="uid://chrxas4thwudp" path="res://assets/BlueFactory.png" id="2_uvy8r"]
+[ext_resource type="PackedScene" uid="uid://bj0c7fvun52bs" path="res://scenes/selection_indicator.tscn" id="3_ejq8p"]
 
-[node name="Building" type="StaticBody2D"]
+[node name="Building" type="StaticBody2D" groups=["buildings"]]
 script = ExtResource("1_n8bkc")
-UnitToProduce = ExtResource("2_ejq8p")
 
 [node name="ProductionTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_uvy8r")
+
+[node name="SelectionIndicator" parent="." instance=ExtResource("3_ejq8p")]
+scale = Vector2(2.5, 2.5)

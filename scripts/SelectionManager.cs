@@ -11,6 +11,7 @@ public partial class SelectionManager : Control
 
     // TODO: Temporary test for unit selection
     public List<Unit> PlacedUnits { get; private set; } = new List<Unit>();
+    public List<Building> PlacedBuildings { get; private set; } = new List<Building>();
 
     public override void _Ready()
     {
@@ -46,18 +47,36 @@ public partial class SelectionManager : Control
                 Vector2 size = finalPosition - startDraggingPosition;
                 Rect2 finalRect = new Rect2(startDraggingPosition, size).Abs();
 
-                PlacedUnits = GetAllUnitsFromGroup("units");
+                PlacedUnits = GetAllUnitsFromGroup();
+
+                // Log.Info($"Placed Units: {PlacedUnits.Count}, Placed Buildings: {PlacedBuildings.Count}");
 
                 PlacedUnits.ForEach(unit =>
                 {
+                    Rect2 unitGlobalRect = unit.GetGlobalBounds();
 
-                    if (finalRect.HasPoint(unit.GlobalPosition))
+                    if (finalRect.Intersects(unitGlobalRect))
                     {
                         GameManager.Instance.AddUnit(unit);
                         unit.SetSelected(true);
-                        // Log.Info($"Unit {unit} is within the selection rectangle, adding to the selection list.");
                     }
                 });
+
+                if (GameManager.Instance.AllUnits.Count == 0)
+                {
+                    PlacedBuildings = GetAllBuildingsFromGroup();
+
+                    PlacedBuildings.ForEach(building =>
+                    {
+                        Rect2 buildingGlobalRect = building.GetGlobalBounds();
+
+                        if (finalRect.Intersects(buildingGlobalRect))
+                        {
+                            GameManager.Instance.SelectBuilding(building);
+                            building.SetSelected(true);
+                        }
+                    });
+                }
 
                 // Log.Info($"Unit List has {GameManager.Instance.AllUnits.Count} units after the selection.");
 
@@ -113,5 +132,14 @@ public partial class SelectionManager : Control
         List<Unit> allUnits = nodesInGroup.OfType<Unit>().ToList();
 
         return allUnits;
+    }
+
+    public List<Building> GetAllBuildingsFromGroup(string groupName = "buildings")
+    {
+        var nodesInGroup = GetTree().GetNodesInGroup(groupName);
+
+        List<Building> allBuildings = nodesInGroup.OfType<Building>().ToList();
+
+        return allBuildings;
     }
 }

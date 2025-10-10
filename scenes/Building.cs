@@ -9,23 +9,28 @@ public partial class Building : StaticBody2D
 
     public Queue<PackedScene> productionQueue = new Queue<PackedScene>();
     public PackedScene currentProduction = null;
+    private Sprite2D sprite;
+    private Sprite2D selectionIndicator;
 
     private float productionInterval = 1.0f;
     private int productionQueueLimit = 5;
 
     public override void _Ready()
     {
+        selectionIndicator = GetNode<Sprite2D>("SelectionIndicator");
+        sprite = GetNode<Sprite2D>("Sprite2D");
+
         productionTimer = GetNode<Timer>("ProductionTimer");
         productionTimer.Timeout += OnProductionTimerTimeout;
         productionTimer.WaitTime = productionInterval;
 
         // TODO: Testing Purposes
         AddToProductionQueue(unitScene);
-        AddToProductionQueue(unitScene);
-        AddToProductionQueue(unitScene);
-        AddToProductionQueue(unitScene);
-        AddToProductionQueue(unitScene);
-        AddToProductionQueue(unitScene);
+        // AddToProductionQueue(unitScene);
+        // AddToProductionQueue(unitScene);
+        // AddToProductionQueue(unitScene);
+        // AddToProductionQueue(unitScene);
+        // AddToProductionQueue(unitScene);
         // TryStartProduction(); // TEMP FOR TESTING
     }
 
@@ -77,6 +82,15 @@ public partial class Building : StaticBody2D
         {
             ProduceUnit();
         }
+    }
+
+    public void SetSelected(bool isSelected)
+    {
+        selectionIndicator.Visible = isSelected;
+    }
+    public Rect2 GetGlobalBounds()
+    {
+        return GlobalTransform * sprite.GetRect();
     }
     public void OnProductionTimerTimeout()
     {

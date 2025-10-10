@@ -16,7 +16,7 @@ public partial class Unit : CharacterBody2D
 
     private NavigationAgent2D navigationAgent;
     private Sprite2D sprite;
-    private Sprite2D unitSelctedIndicator;
+    private Sprite2D selectionIndicator;
     private Area2D attackRange;
     private CollisionShape2D attackRangecollisionShape;
     private Timer attackInvervalTimer;
@@ -48,7 +48,7 @@ public partial class Unit : CharacterBody2D
         sprite = GetNode<Sprite2D>("Sprite2D");
         sprite.Texture = teamID == 1 ? AllyTexture : EnemyTexture;
 
-        unitSelctedIndicator = GetNode<Sprite2D>("UnitSelectedIndicator");
+        selectionIndicator = GetNode<Sprite2D>("SelectionIndicator");
 
         attackRange = GetNode<Area2D>("AttackRange");
         attackRange.BodyEntered += OnAttackRangeBodyEntered;
@@ -147,7 +147,7 @@ public partial class Unit : CharacterBody2D
 
     public void SetSelected(bool isSelected)
     {
-        unitSelctedIndicator.Visible = isSelected;
+        selectionIndicator.Visible = isSelected;
     }
     public void TryAttack()
     {
@@ -190,6 +190,11 @@ public partial class Unit : CharacterBody2D
         SetTargetUnit(unit);
 
         Log.Info($"Unit {this} from Team {this.teamID} detected body {unit} from Team {unit.teamID} in attack range.");
+    }
+
+    public Rect2 GetGlobalBounds()
+    {
+        return GlobalTransform * sprite.GetRect();
     }
 }
 
