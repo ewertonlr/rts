@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://cm4obc1qjvwp6"]
+
+[ext_resource type="Script" uid="uid://dmcxefgolxk07" path="res://scripts/BuildingManagerUi.cs" id="1_1chl4"]
+[ext_resource type="PackedScene" uid="uid://c1n7gt2l6n8qa" path="res://scenes/unit_panel_container_ui.tscn" id="2_gbpex"]
+
+[node name="BuildingManagerUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1chl4")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 3
+
+[node name="UnitPanelContainerUI" parent="GridContainer" instance=ExtResource("2_gbpex")]
+layout_mode = 2

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1n7gt2l6n8qa"]
+
+[ext_resource type="Script" uid="uid://y7t862csi5n5" path="res://scripts/UnitPanelContainerUi.cs" id="1_5ge2q"]
+[ext_resource type="Texture2D" uid="uid://dhuy3j2atec8i" path="res://assets/BlueSquare32.png" id="1_oasew"]
+
+[node name="UnitPanelContainerUI" type="PanelContainer"]
+custom_minimum_size = Vector2(50, 50)
+script = ExtResource("1_5ge2q")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="UnitNameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 8
+text = "Square Tank"
+
+[node name="UnitCostLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 8
+text = "Cost: 100g"
+
+[node name="ProduceUnitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+icon = ExtResource("1_oasew")
+icon_alignment = 1

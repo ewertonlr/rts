@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 public partial class SelectionManager : Control
 {
+    [Signal]
+    public delegate void BuildingSelectedEventHandler(Building selectedBuilding);
+    [Signal]
+    public delegate void BuildingUnselectedEventHandler();
+    private BuildingManagerUi buildingManagerUi;
     private bool isDragging = false;
     private Vector2 startDraggingPosition;
     private ColorRect selectionRect;
@@ -20,6 +25,14 @@ public partial class SelectionManager : Control
         // PlacedUnits.Add(new Unit(new Vector2(500, 250)));
         // PlacedUnits.Add(new Unit(new Vector2(700, 350)));
         // PlacedUnits.Add(new Unit(new Vector2(900, 450)));
+
+        buildingManagerUi = GetNode<BuildingManagerUi>("%BuildingManagerUI");
+
+        if (buildingManagerUi != null)
+        {
+            BuildingSelected += buildingManagerUi.OnBuildingSelected;
+            BuildingUnselected += buildingManagerUi.OnBuildingUnselected;
+        }
 
         Log.Info($"SelectionManager is Ready with {PlacedUnits.Count} units placed.");
     }
@@ -42,6 +55,7 @@ public partial class SelectionManager : Control
             else if (mouseEvent.ButtonIndex == MouseButton.Left && !mouseEvent.Pressed)
             {
                 GameManager.Instance.RemoveAllUnits();
+                EmitSignal(SignalName.BuildingUnselected);
 
                 Vector2 finalPosition = GetGlobalMousePosition();
                 Vector2 size = finalPosition - startDraggingPosition;
@@ -74,6 +88,7 @@ public partial class SelectionManager : Control
                         {
                             GameManager.Instance.SelectBuilding(building);
                             building.SetSelected(true);
+                            EmitSignal(SignalName.BuildingSelected, building);
                         }
                     });
                 }

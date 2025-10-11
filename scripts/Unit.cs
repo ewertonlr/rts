@@ -64,7 +64,7 @@ public partial class Unit : CharacterBody2D
         if (GameManager.Instance != null)
             Died += GameManager.Instance.OnUnitDied;
 
-        Log.Info($"Unit {this} created at position {GlobalPosition}");
+        // Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
     public override void _PhysicsProcess(double delta)
@@ -95,7 +95,7 @@ public partial class Unit : CharacterBody2D
             if (GlobalPosition.DistanceTo(navigationAgent.TargetPosition) < 1f || navigationAgent.IsNavigationFinished())
             {
                 SetBehaviorState(BehaviorState.Idle);
-                Log.Info($"Unit {this} from TeamID {this.teamID} entering in Idle state!");
+                // Log.Info($"Unit {this} from TeamID {this.teamID} entering in Idle state!");
                 return;
             }
         }
@@ -113,7 +113,7 @@ public partial class Unit : CharacterBody2D
         if (currentPosition.DistanceTo(nextPathPosition) < 1f)
             return; // Already at the next path position
 
-        // Log.Info($"Unit {this} nextPathPosition {nextPathPosition}");
+        //Log.Info($"Unit {this} nextPathPosition {nextPathPosition}");
 
         Vector2 direction = (nextPathPosition - GlobalPosition).Normalized();
         float speed = 100f; // You can adjust the speed as needed
@@ -134,7 +134,7 @@ public partial class Unit : CharacterBody2D
     public void MoveTo(Vector2 targetPosition)
     {
         navigationAgent.TargetPosition = targetPosition;
-        // Log.Info($"Unit {this} navigation position {targetPosition}");
+        //Log.Info($"Unit {this} navigation position {targetPosition}");
     }
     public void SetTargetUnit(Unit targetUnit)
     {
@@ -142,7 +142,7 @@ public partial class Unit : CharacterBody2D
         MoveTo(targetUnit.GlobalPosition);
         SetBehaviorState(BehaviorState.Attacking);
 
-        Log.Info($"Unit {this} set target to {targetUnit}");
+        // Log.Info($"Unit {this} set target to {targetUnit}");
     }
 
     public void SetSelected(bool isSelected)
@@ -154,7 +154,7 @@ public partial class Unit : CharacterBody2D
         if (IsInstanceValid(targetUnit))
         {
             targetUnit.ReceiveDamage(attackDamage);
-            Log.Info($"Unit {this} from Team {this.teamID} attacking Unit {targetUnit} from Team {targetUnit.teamID}!");
+            // Log.Info($"Unit {this} from Team {this.teamID} attacking Unit {targetUnit} from Team {targetUnit.teamID}!");
             attackInvervalTimer.Start();
         }
         else
@@ -166,7 +166,7 @@ public partial class Unit : CharacterBody2D
     public void ReceiveDamage(int damage)
     {
         health -= damage;
-        Log.Info($"Unit {this} received {damage} damage, health now {health}");
+        // Log.Info($"Unit {this} received {damage} damage, health now {health}");
         if (health <= 0)
         {
             Die();
@@ -174,7 +174,7 @@ public partial class Unit : CharacterBody2D
     }
     public void Die()
     {
-        Log.Info($"Unit {this} died.");
+        // Log.Info($"Unit {this} died.");
         EmitSignal(SignalName.Died, this);
         QueueFree();
     }
@@ -189,7 +189,7 @@ public partial class Unit : CharacterBody2D
 
         SetTargetUnit(unit);
 
-        Log.Info($"Unit {this} from Team {this.teamID} detected body {unit} from Team {unit.teamID} in attack range.");
+        // Log.Info($"Unit {this} from Team {this.teamID} detected body {unit} from Team {unit.teamID} in attack range.");
     }
 
     public Rect2 GetGlobalBounds()

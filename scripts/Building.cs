@@ -1,11 +1,13 @@
 using Godot;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.Wasm;
 
 public partial class Building : StaticBody2D
 {
     private Timer productionTimer;
 
     public PackedScene unitScene = GD.Load<PackedScene>("uid://b42ek7rmo23nq");
+    public List<PackedScene> availableUnits = new List<PackedScene>();
 
     public Queue<PackedScene> productionQueue = new Queue<PackedScene>();
     public PackedScene currentProduction = null;
@@ -24,6 +26,14 @@ public partial class Building : StaticBody2D
         productionTimer.Timeout += OnProductionTimerTimeout;
         productionTimer.WaitTime = productionInterval;
 
+        availableUnits.Add(unitScene);
+        // TODO: Testing Purposes
+        availableUnits.Add(unitScene);
+        availableUnits.Add(unitScene);
+        availableUnits.Add(unitScene);
+        availableUnits.Add(unitScene);
+        availableUnits.Add(unitScene);
+
         // TODO: Testing Purposes
         AddToProductionQueue(unitScene);
         // AddToProductionQueue(unitScene);
@@ -36,6 +46,11 @@ public partial class Building : StaticBody2D
 
     public void AddToProductionQueue(PackedScene unitScene)
     {
+        if (availableUnits.Contains(unitScene) == false)
+        {
+            Log.Info("Unidade não disponível para produção.");
+            return;
+        }
         if (productionQueue.Count >= productionQueueLimit)
         {
             Log.Info("Fila de produção cheia.");
