@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Dynamic;
 
 public partial class Unit : CharacterBody2D
 {
@@ -20,10 +21,7 @@ public partial class Unit : CharacterBody2D
     private Area2D attackRange;
     private CollisionShape2D attackRangecollisionShape;
     private Timer attackInvervalTimer;
-
-
     private Unit targetUnit;
-
     public enum BehaviorState
     {
         Idle,
@@ -38,15 +36,24 @@ public partial class Unit : CharacterBody2D
     private float attackRangeRadius = 0f;
     private float defaultAttackInterval = 1.0f;
 
-    private int health = 100;
-    private int attackDamage = 10;
+    private int health;
+    private int attackDamage;
+
+    public UnitData Data { get; private set; }
+
+    public Texture2D Icon => Data?.Icon;
+    public string Name => Data?.Name ?? "Unknown";
+    public int Cost => Data?.Cost ?? 0;
 
     public override void _Ready()
     {
         navigationAgent = GetNode<NavigationAgent2D>("NavigationAgent2D");
 
         sprite = GetNode<Sprite2D>("Sprite2D");
-        sprite.Texture = teamID == 1 ? AllyTexture : EnemyTexture;
+        sprite.Texture = Data?.Icon;
+
+        // sprite.Texture = teamID == 1 ? AllyTexture : EnemyTexture;
+        // sprite.Texture = Data?.Icon ?? (teamID == 1 ? AllyTexture : EnemyTexture);
 
         selectionIndicator = GetNode<Sprite2D>("SelectionIndicator");
 
@@ -101,6 +108,19 @@ public partial class Unit : CharacterBody2D
         }
 
         ProcessMovement();
+    }
+
+    public void Initialize(UnitData data, int teamID)
+    {
+        if (data == null)
+        {
+            Log.Error("Initialize chamado com UnitData nulo.");
+            return;
+        }
+        this.Data = data;
+        this.teamID = teamID;
+        health = 100;
+        attackDamage = 10;
     }
 
     private void ProcessMovement()

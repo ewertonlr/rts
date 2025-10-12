@@ -3,11 +3,10 @@ using System;
 
 public partial class UnitPanelContainerUi : PanelContainer
 {
-    public PackedScene UnitScene { get; set; }
-
     private Label unitNameLabel;
     private Label unitCostLabel;
     private Button produceUnitButton;
+    public UnitData UnitData { get; set; }
 
     public override void _Ready()
     {
@@ -17,11 +16,11 @@ public partial class UnitPanelContainerUi : PanelContainer
 
         produceUnitButton.Pressed += OnProduceUnitButtonPressed;
 
-        if (UnitScene != null)
+        if (UnitData != null)
         {
-            Unit newUnit = UnitScene.Instantiate<Unit>();
-            unitNameLabel.Text = newUnit.Name;
-            unitCostLabel.Text = "Cost: 50"; // Placeholder cost, replace with actual cost if available
+            unitNameLabel.Text = UnitData.Name;
+            unitCostLabel.Text = $"Cost: {UnitData.Cost}"; // Placeholder cost, replace with actual cost if available
+            produceUnitButton.Icon = UnitData.Icon;
         }
         else
         {
@@ -33,11 +32,17 @@ public partial class UnitPanelContainerUi : PanelContainer
 
     public void OnProduceUnitButtonPressed()
     {
+        Log.Info($"Produce button pressed for unit: {UnitData?.Name}");
+
         var selectedBuilding = GameManager.Instance.SelectedBuilding;
-        if (selectedBuilding != null && UnitScene != null)
+
+        Log.Info($"Selected Building: {selectedBuilding != null}");
+        Log.Info($"Selected Building: {UnitData != null}");
+
+        if (selectedBuilding != null && UnitData != null)
         {
-            selectedBuilding.AddToProductionQueue(UnitScene);
-            // Log.Info($"Requested production of unit from building: {selectedBuilding}");
+            selectedBuilding.AddToProductionQueue(UnitData.UnitScene);
+            Log.Info($"Requested production of unit from building: {selectedBuilding}");
         }
         else
         {

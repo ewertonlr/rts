@@ -24,13 +24,13 @@ public partial class BuildingManagerUi : Control
         }
 
         // Create new panels based on the building's available units
-        foreach (var unitScene in building.availableUnits)
+        foreach (var unitData in building.AvailableUnits)
         {
             UnitPanelContainerUi unitUnitPanelContainerUi = unitPanelContainerUiScene.Instantiate<UnitPanelContainerUi>();
-            unitUnitPanelContainerUi.UnitScene = unitScene;
+            unitUnitPanelContainerUi.UnitData = unitData;
             gridContainer.AddChild(unitUnitPanelContainerUi);
 
-            // Log.Info($"BuildingManager: Added unit panel for unit scene: {unitScene}");
+            // Log.Info($"BuildingManager: Added unit panel for Unit Data: {unitData}");
         }
     }
     public void OnBuildingSelected(Building selectedBuilding)

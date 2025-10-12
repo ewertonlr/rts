@@ -54,7 +54,13 @@ public partial class SelectionManager : Control
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Left && !mouseEvent.Pressed)
             {
-                GameManager.Instance.RemoveAllUnits();
+
+                Control hoveredControl = GetViewport().GuiGetHoveredControl();
+                // Log.Info($"Finalizing selection XXXXXXXX...{hoveredControl}");
+
+                if (hoveredControl == null)
+                    GameManager.Instance.RemoveAllUnits();
+
                 EmitSignal(SignalName.BuildingUnselected);
 
                 Vector2 finalPosition = GetGlobalMousePosition();
