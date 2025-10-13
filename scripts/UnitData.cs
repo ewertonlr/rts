@@ -1,10 +1,9 @@
 using Godot;
+using System.Collections.Generic;
 
-// Adicionamos [GlobalClass] para que possamos ver este tipo no editor Godot
 [GlobalClass]
 public partial class UnitData : Resource
 {
-    // [Export] é necessário aqui para salvar no arquivo .tres
     [Export]
     public int Id { get; set; } = 0;
 
@@ -14,11 +13,24 @@ public partial class UnitData : Resource
     [Export]
     public int Cost { get; set; } = 50;
 
-    // O ícone deve ser um Texture2D (o sprite que você usará)
-    [Export]
-    public Texture2D Icon { get; set; }
+    // NOVO: Dicionário para Ícones da UI (usado em BuildingManagerUi)
+    public Dictionary<int, Texture2D> IconByTeam { get; set; } = new Dictionary<int, Texture2D>();
 
-    // Opcional: Referência à cena real para produção
+    // NOVO: Dicionário para Texturas do Sprite da Unidade (usado em Unit.cs)
+    public Dictionary<int, Texture2D> SpriteTextureByTeam { get; set; } = new Dictionary<int, Texture2D>();
+
+    // A UnitScene é a mesma, pois a única diferença é a textura
     [Export]
     public PackedScene UnitScene { get; set; }
+
+    // NOVO MÉTODO: Obtém o ícone para a equipe (ex: UnitData.GetIcon(GameManager.LocalPlayerTeamId))
+    public Texture2D GetIcon(int teamId)
+    {
+        // Se já estiver inicializado acima, não há risco de NullReferenceException aqui.
+        if (IconByTeam.TryGetValue(teamId, out Texture2D icon))
+        {
+            return icon;
+        }
+        return null;
+    }
 }

@@ -112,7 +112,10 @@ public partial class Building : StaticBody2D
         currentProduction = null;
 
         Unit newUnit = unitScene.Instantiate<Unit>();
-        newUnit.Initialize(GameDataCatalog.Instance.GetUnitData(1), 1); // TODO: Set proper teamID and UnitData
+
+        // TODO: change 1 to unit id and team id accordingly
+        newUnit.Initialize(GameDataCatalog.Instance.GetUnitData(1), 1);
+
         newUnit.GlobalPosition = this.GlobalPosition + new Vector2(50, 0);
         GetParent().AddChild(newUnit);
 

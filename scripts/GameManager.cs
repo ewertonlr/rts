@@ -6,6 +6,7 @@ public partial class GameManager : Node
     public static GameManager Instance { get; private set; }
     public List<Unit> AllUnits { get; private set; } = new List<Unit>();
     public Building SelectedBuilding { get; set; } = null;
+    public int LocalPlayerTeamId { get; set; } = 1; // 1 para azul, 2 para vermelho
 
     public override void _Ready()
     {

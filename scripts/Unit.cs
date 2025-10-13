@@ -1,19 +1,12 @@
 using Godot;
 using System;
 using System.Dynamic;
+using System.Collections.Generic;
 
 public partial class Unit : CharacterBody2D
 {
     [Signal]
     public delegate void DiedEventHandler(Unit deadUnit);
-
-    private const string AllyTextureUID = "uid://dhuy3j2atec8i";
-    private const string EnemyTextureUID = "uid://dp01wsppv1ocb";
-
-
-    private Texture2D AllyTexture = ResourceLoader.Load<Texture2D>(AllyTextureUID);
-    private Texture2D EnemyTexture = ResourceLoader.Load<Texture2D>(EnemyTextureUID);
-
 
     private NavigationAgent2D navigationAgent;
     private Sprite2D sprite;
@@ -22,6 +15,12 @@ public partial class Unit : CharacterBody2D
     private CollisionShape2D attackRangecollisionShape;
     private Timer attackInvervalTimer;
     private Unit targetUnit;
+
+    public UnitData Data { get; private set; }
+    public Texture2D Icon => Data?.GetIcon(teamID);
+    public string Name => Data?.Name ?? "Unknown";
+    public int Cost => Data?.Cost ?? 0;
+
     public enum BehaviorState
     {
         Idle,
@@ -39,22 +38,10 @@ public partial class Unit : CharacterBody2D
     private int health;
     private int attackDamage;
 
-    public UnitData Data { get; private set; }
-
-    public Texture2D Icon => Data?.Icon;
-    public string Name => Data?.Name ?? "Unknown";
-    public int Cost => Data?.Cost ?? 0;
-
     public override void _Ready()
     {
         navigationAgent = GetNode<NavigationAgent2D>("NavigationAgent2D");
-
         sprite = GetNode<Sprite2D>("Sprite2D");
-        sprite.Texture = Data?.Icon;
-
-        // sprite.Texture = teamID == 1 ? AllyTexture : EnemyTexture;
-        // sprite.Texture = Data?.Icon ?? (teamID == 1 ? AllyTexture : EnemyTexture);
-
         selectionIndicator = GetNode<Sprite2D>("SelectionIndicator");
 
         attackRange = GetNode<Area2D>("AttackRange");
@@ -71,6 +58,11 @@ public partial class Unit : CharacterBody2D
         if (GameManager.Instance != null)
             Died += GameManager.Instance.OnUnitDied;
 
+        if (Data != null)
+        {
+            // Aplica a textura com base no teamID (se já estiver definido)
+            sprite.Texture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
+        }
         // Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
@@ -121,6 +113,27 @@ public partial class Unit : CharacterBody2D
         this.teamID = teamID;
         health = 100;
         attackDamage = 10;
+
+
+        // Log.Error($"Unit {this} initialized with data: {data.Name} for TeamID: {teamID} | Sprite found: {spriteTexture}"); // --- IGNORE ---
+        // Log.Error($"sprite: {sprite}"); // --- IGNORE ---
+
+        if (sprite == null)
+        {
+            sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
+        }
+
+        // 2. Configure a textura apenas se o nó foi encontrado.
+        Texture2D spriteTexture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
+
+        if (sprite != null && spriteTexture != null)
+        {
+            sprite.Texture = spriteTexture; // <--- AGORA ESTA LINHA É SEGURA!
+        }
+        else
+        {
+            Log.Error($"Falha ao configurar sprite para {data.Name}: sprite é null ({sprite == null}) ou textura é null.");
+        }
     }
 
     private void ProcessMovement()

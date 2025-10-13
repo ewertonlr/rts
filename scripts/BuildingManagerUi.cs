@@ -23,11 +23,14 @@ public partial class BuildingManagerUi : Control
             child.QueueFree();
         }
 
+        int localTeamId = GameManager.Instance?.LocalPlayerTeamId ?? 1; // Obtenha o TeamID com segurança
+
         // Create new panels based on the building's available units
         foreach (var unitData in building.AvailableUnits)
         {
             UnitPanelContainerUi unitUnitPanelContainerUi = unitPanelContainerUiScene.Instantiate<UnitPanelContainerUi>();
             unitUnitPanelContainerUi.UnitData = unitData;
+            unitUnitPanelContainerUi.SetupUi(localTeamId);
             gridContainer.AddChild(unitUnitPanelContainerUi);
 
             // Log.Info($"BuildingManager: Added unit panel for Unit Data: {unitData}");
@@ -39,7 +42,7 @@ public partial class BuildingManagerUi : Control
         {
             UpdateUnitPanels(selectedBuilding);
             this.Visible = true;
-            // Log.Info($"BuildingManager: Building selected: {selectedBuilding}");
+            Log.Info($"BuildingManager: Building selected: {selectedBuilding}");
 
         }
         // Here you can update the UI or perform other actions based on the selected building

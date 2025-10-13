@@ -6,26 +6,44 @@ public partial class UnitPanelContainerUi : PanelContainer
     private Label unitNameLabel;
     private Label unitCostLabel;
     private Button produceUnitButton;
+    private Texture2D teamIcon;
     public UnitData UnitData { get; set; }
 
-    public override void _Ready()
+    // public override void _Ready()
+    // {
+    // }
+
+    public void SetupUi(int localTeamId)
     {
-        unitNameLabel = GetNode<Label>("VBoxContainer/UnitNameLabel");
-        unitCostLabel = GetNode<Label>("VBoxContainer/UnitCostLabel");
-        produceUnitButton = GetNode<Button>("VBoxContainer/ProduceUnitButton");
+
+        unitNameLabel = GetNode<Label>("%UnitNameLabel");
+        unitCostLabel = GetNode<Label>("%UnitCostLabel");
+        produceUnitButton = GetNode<Button>("%ProduceUnitButton");
 
         produceUnitButton.Pressed += OnProduceUnitButtonPressed;
 
-        if (UnitData != null)
+        // Aqui garantimos que UnitData não é nulo, pois SetupUi só deve ser chamado se for válido.
+        if (UnitData == null)
+        {
+            // Se ainda for nulo aqui, algo deu muito errado, mas o _Ready já tratou a parte dos GetNode.
+            Log.Error("SetupUi chamado sem UnitData.");
+            return;
+        }
+
+        // Agora, a lógica de configuração da UI que depende dos dados
+
+        Texture2D teamIcon = UnitData.GetIcon(localTeamId);
+
+        if (teamIcon != null)
         {
             unitNameLabel.Text = UnitData.Name;
-            unitCostLabel.Text = $"Cost: {UnitData.Cost}"; // Placeholder cost, replace with actual cost if available
-            produceUnitButton.Icon = UnitData.Icon;
+            unitCostLabel.Text = $"Cost: {UnitData.Cost}";
+            produceUnitButton.Icon = teamIcon;
+            produceUnitButton.Disabled = false; // Habilita se tudo estiver ok
         }
         else
         {
-            unitNameLabel.Text = "No Unit";
-            unitCostLabel.Text = "Cost: N/A";
+            unitNameLabel.Text = $"{UnitData.Name} (ERRO Ícone)";
             produceUnitButton.Disabled = true;
         }
     }
