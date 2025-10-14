@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=4 format=3 uid="uid://bdmiemr8iuvx8"]
+
+[ext_resource type="Texture2D" uid="uid://c6x4erhsxulv8" path="res://assets/units/infantry/Base_Infantry_Blue_32.png" id="1_n7h5j"]
+[ext_resource type="Script" uid="uid://2b7m7nwd8uxc" path="res://scripts/UnitData.cs" id="1_vg37x"]
+[ext_resource type="PackedScene" uid="uid://cn71c6o3co4d0" path="res://scenes/unit_gunner.tscn" id="1_xyosj"]
+
+[resource]
+script = ExtResource("1_vg37x")
+Id = "gunner"
+Name = "Gunner"
+DefaultIcon = ExtResource("1_n7h5j")
+UnitScene = ExtResource("1_xyosj")
+metadata/_custom_type_script = "uid://2b7m7nwd8uxc"

@@ -1,11 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://757kle2ca63q"]
+[gd_scene load_steps=9 format=3 uid="uid://757kle2ca63q"]
 
 [ext_resource type="Script" uid="uid://coc1u52a2l11t" path="res://scripts/Building.cs" id="1_n8bkc"]
+[ext_resource type="Script" uid="uid://2b7m7nwd8uxc" path="res://scripts/UnitData.cs" id="2_g3pb6"]
 [ext_resource type="Texture2D" uid="uid://chrxas4thwudp" path="res://assets/BlueFactory.png" id="2_uvy8r"]
+[ext_resource type="Resource" uid="uid://bdmiemr8iuvx8" path="res://resources/units/gunner.tres" id="3_8lqx8"]
 [ext_resource type="PackedScene" uid="uid://bj0c7fvun52bs" path="res://scenes/selection_indicator.tscn" id="3_ejq8p"]
+[ext_resource type="Resource" uid="uid://bv73ss6onykar" path="res://resources/units/engineer.tres" id="4_iwd2d"]
+[ext_resource type="Resource" uid="uid://bpn10g88fvp1f" path="res://resources/units/rocketman.tres" id="5_7huw0"]
+[ext_resource type="Resource" uid="uid://dtg2fldmysmf3" path="res://resources/units/tank.tres" id="6_blq7k"]
 
 [node name="Building" type="StaticBody2D" groups=["buildings"]]
 script = ExtResource("1_n8bkc")
+AvailableUnits = Array[ExtResource("2_g3pb6")]([ExtResource("3_8lqx8"), ExtResource("4_iwd2d"), ExtResource("5_7huw0"), ExtResource("6_blq7k")])
 
 [node name="ProductionTimer" type="Timer" parent="."]
 one_shot = true

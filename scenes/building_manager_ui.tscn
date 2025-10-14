@@ -20,4 +20,5 @@ offset_bottom = 40.0
 columns = 3
 
 [node name="UnitPanelContainerUI" parent="GridContainer" instance=ExtResource("2_gbpex")]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2

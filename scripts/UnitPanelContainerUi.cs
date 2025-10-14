@@ -33,19 +33,12 @@ public partial class UnitPanelContainerUi : PanelContainer
         // Agora, a lógica de configuração da UI que depende dos dados
 
         Texture2D teamIcon = UnitData.GetIcon(localTeamId);
+        Log.Error($"Team Icon for team {localTeamId}: {teamIcon}");
 
-        if (teamIcon != null)
-        {
-            unitNameLabel.Text = UnitData.Name;
-            unitCostLabel.Text = $"Cost: {UnitData.Cost}";
-            produceUnitButton.Icon = teamIcon;
-            produceUnitButton.Disabled = false; // Habilita se tudo estiver ok
-        }
-        else
-        {
-            unitNameLabel.Text = $"{UnitData.Name} (ERRO Ícone)";
-            produceUnitButton.Disabled = true;
-        }
+        unitNameLabel.Text = UnitData.Name;
+        unitCostLabel.Text = $"Cost: {UnitData.Cost}";
+        produceUnitButton.Icon = UnitData.DefaultIcon;
+        produceUnitButton.Disabled = false; // Habilita se tudo estiver ok
     }
 
     public void OnProduceUnitButtonPressed()
@@ -59,7 +52,7 @@ public partial class UnitPanelContainerUi : PanelContainer
 
         if (selectedBuilding != null && UnitData != null)
         {
-            selectedBuilding.AddToProductionQueue(UnitData.UnitScene);
+            selectedBuilding.AddToProductionQueue(UnitData);
             Log.Info($"Requested production of unit from building: {selectedBuilding}");
         }
         else

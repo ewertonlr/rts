@@ -42,7 +42,7 @@ public partial class GameDataCatalog : Node
             // 1. Cria a UnitData
             UnitData data = new UnitData
             {
-                Id = id,
+                // Id = id,
                 Name = typeName,
                 Cost = cost,
                 UnitScene = unitScene
@@ -59,7 +59,7 @@ public partial class GameDataCatalog : Node
             data.SpriteTextureByTeam = data.IconByTeam;
 
             // 3. Adiciona ao catálogo
-            UnitDataByID.Add(data.Id, data);
+            // UnitDataByID.Add(data.Id, data);
         }
 
         // CHAME A FUNÇÃO AUXILIAR PARA CADA TIPO DE UNIDADE

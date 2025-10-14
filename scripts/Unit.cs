@@ -3,6 +3,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 
+[GlobalClass]
 public partial class Unit : CharacterBody2D
 {
     [Signal]
@@ -17,7 +18,8 @@ public partial class Unit : CharacterBody2D
     private Unit targetUnit;
 
     public UnitData Data { get; private set; }
-    public Texture2D Icon => Data?.GetIcon(teamID);
+    // public Texture2D Icon => Data?.GetIcon(teamID);
+    public Texture2D Icon => sprite?.Texture;
     public string Name => Data?.Name ?? "Unknown";
     public int Cost => Data?.Cost ?? 0;
 
@@ -37,6 +39,12 @@ public partial class Unit : CharacterBody2D
 
     private int health;
     private int attackDamage;
+
+    private const string TEAM_COLOR_SHADER_PATH = "uid://nihmenvkqgr0";
+    private static readonly Color TARGET_COLOR = new Color(0.3882f, 0.6078f, 1.0f, 1.0f);
+    private static readonly Color TEAM2_REPLACEMENT_COLOR = new Color(1.0f, 0.2f, 0.2f, 1.0f);
+    private const float COLOR_TOLERANCE = 0.75f;
+    private ShaderMaterial _teamColorMaterial;
 
     public override void _Ready()
     {
@@ -58,11 +66,12 @@ public partial class Unit : CharacterBody2D
         if (GameManager.Instance != null)
             Died += GameManager.Instance.OnUnitDied;
 
-        if (Data != null)
-        {
-            // Aplica a textura com base no teamID (se já estiver definido)
-            sprite.Texture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
-        }
+        // ApplyTeamShader();
+        // if (Data != null)
+        // {
+        //     // Aplica a textura com base no teamID (se já estiver definido)
+        //     sprite.Texture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
+        // }
         // Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
@@ -114,28 +123,49 @@ public partial class Unit : CharacterBody2D
         health = 100;
         attackDamage = 10;
 
+        Log.Info($"Init Unit {this} of Team {teamID}");
 
-        // Log.Error($"Unit {this} initialized with data: {data.Name} for TeamID: {teamID} | Sprite found: {spriteTexture}"); // --- IGNORE ---
-        // Log.Error($"sprite: {sprite}"); // --- IGNORE ---
+        ApplyTeamShader();
+    }
 
+
+    public void ApplyTeamShader()
+    {
         if (sprite == null)
-        {
-            sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
-        }
+            sprite = GetNode<Sprite2D>("Sprite2D");
 
-        // 2. Configure a textura apenas se o nó foi encontrado.
-        Texture2D spriteTexture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
-
-        if (sprite != null && spriteTexture != null)
+        if (teamID == 2)
         {
-            sprite.Texture = spriteTexture; // <--- AGORA ESTA LINHA É SEGURA!
+            Log.Info($"Applying team shader for Unit {this} of Team {teamID}");
+            // === TIME VERMELHO: APLICA O SHADER ===
+
+            // 1a. Garante que o material base esteja carregado e instanciado.
+            if (_teamColorMaterial == null)
+            {
+                Log.Info("Loading and creating team color shader material.");
+
+                Shader shader = GD.Load<Shader>(TEAM_COLOR_SHADER_PATH);
+                // IMPORTANTE: Criar uma nova instância do material para esta unidade
+                _teamColorMaterial = new ShaderMaterial();
+                _teamColorMaterial.Shader = shader;
+
+                // 1b. Configura os parâmetros (só precisa ser feito uma vez)
+                _teamColorMaterial.SetShaderParameter("target_color", TARGET_COLOR);
+                _teamColorMaterial.SetShaderParameter("replacement_color", TEAM2_REPLACEMENT_COLOR);
+                _teamColorMaterial.SetShaderParameter("color_tolerance", COLOR_TOLERANCE);
+            }
+
+            // 2. Aplica o material ao Sprite2D
+            sprite.Material = _teamColorMaterial;
         }
         else
         {
-            Log.Error($"Falha ao configurar sprite para {data.Name}: sprite é null ({sprite == null}) ou textura é null.");
+            // === TIME AZUL/PADRÃO: REMOVE O SHADER ===
+
+            // Garante que o sprite NÃO tenha material para usar a renderização padrão.
+            sprite.Material = null;
         }
     }
-
     private void ProcessMovement()
     {
 

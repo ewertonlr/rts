@@ -5,13 +5,16 @@ using System.Collections.Generic;
 public partial class UnitData : Resource
 {
     [Export]
-    public int Id { get; set; } = 0;
+    public string Id { get; set; }
 
     [Export]
     public string Name { get; set; } = "New Unit";
 
     [Export]
     public int Cost { get; set; } = 50;
+
+    [Export]
+    public Texture2D DefaultIcon { get; set; }
 
     // NOVO: Dicionário para Ícones da UI (usado em BuildingManagerUi)
     public Dictionary<int, Texture2D> IconByTeam { get; set; } = new Dictionary<int, Texture2D>();

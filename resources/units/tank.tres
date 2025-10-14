@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=4 format=3 uid="uid://dtg2fldmysmf3"]
+
+[ext_resource type="Script" uid="uid://2b7m7nwd8uxc" path="res://scripts/UnitData.cs" id="1_skdli"]
+[ext_resource type="Texture2D" uid="uid://ca3epiftdxg60" path="res://assets/units/vehicles/Base_Vehicle_Tank_Blue_64.png" id="1_swts2"]
+[ext_resource type="PackedScene" uid="uid://ct0g3348gmgda" path="res://scenes/unit_tank.tscn" id="1_xsf5n"]
+
+[resource]
+script = ExtResource("1_skdli")
+Id = "tank"
+Name = "Tank"
+Cost = 250
+DefaultIcon = ExtResource("1_swts2")
+UnitScene = ExtResource("1_xsf5n")
+metadata/_custom_type_script = "uid://2b7m7nwd8uxc"

@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System.Collections.Generic;
 using System.Runtime.Intrinsics.Wasm;
 
@@ -10,10 +11,12 @@ public partial class Building : StaticBody2D
     // public List<PackedScene> availableUnits = new List<PackedScene>();
     [Export]
     public int[] ProduceableUnitIDs = new int[] { 1 }; // IDs of units this building can produce
-    public List<UnitData> AvailableUnits { get; private set; } = new List<UnitData>();
 
-    public Queue<PackedScene> productionQueue = new Queue<PackedScene>();
-    public PackedScene currentProduction = null;
+    [Export]
+    public Array<UnitData> AvailableUnits { get; set; } = new Array<UnitData>();
+
+    public Queue<UnitData> productionQueue = new Queue<UnitData>();
+    public UnitData currentProduction = null;
     private Sprite2D sprite;
     private Sprite2D selectionIndicator;
 
@@ -29,7 +32,7 @@ public partial class Building : StaticBody2D
         productionTimer.Timeout += OnProductionTimerTimeout;
         productionTimer.WaitTime = productionInterval;
 
-        LoadAvailableUnitData();
+        // LoadAvailableUnitData();
 
         // availableUnits.Add(unitScene);
         // // TODO: Testing Purposes
@@ -71,7 +74,7 @@ public partial class Building : StaticBody2D
         Log.Info($"Building carregou {AvailableUnits.Count} tipos de unidades para produção.");
     }
 
-    public void AddToProductionQueue(PackedScene unitScene)
+    public void AddToProductionQueue(UnitData unitData)
     {
         // if (AvailableUnits.Contains(unitScene) == false)
         // {
@@ -83,7 +86,7 @@ public partial class Building : StaticBody2D
             Log.Info("Fila de produção cheia.");
             return;
         }
-        productionQueue.Enqueue(unitScene);
+        productionQueue.Enqueue(unitData);
         Log.Info($"Unidade adicionada à fila de produção. Total na fila: {productionQueue.Count}");
 
         TryStartProduction();
@@ -108,13 +111,13 @@ public partial class Building : StaticBody2D
             return;
         }
 
-        PackedScene unitScene = productionQueue.Dequeue();
+        UnitData unitData = productionQueue.Dequeue();
         currentProduction = null;
 
-        Unit newUnit = unitScene.Instantiate<Unit>();
+        Unit newUnit = unitData.UnitScene.Instantiate<Unit>();
 
-        // TODO: change 1 to unit id and team id accordingly
-        newUnit.Initialize(GameDataCatalog.Instance.GetUnitData(1), 1);
+        // newUnit.Initialize(GameDataCatalog.Instance.GetUnitData(1), 1);
+        newUnit.Initialize(unitData, 2);
 
         newUnit.GlobalPosition = this.GlobalPosition + new Vector2(50, 0);
         GetParent().AddChild(newUnit);

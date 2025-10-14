@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://b42ek7rmo23nq"]
+[gd_scene load_steps=6 format=3 uid="uid://tq5uo58lis8s"]
 
-[ext_resource type="Script" uid="uid://8gqantmofepg" path="res://scripts/Unit.cs" id="1_o7ajc"]
-[ext_resource type="Texture2D" uid="uid://dhuy3j2atec8i" path="res://assets/BlueSquare32.png" id="2_k673f"]
-[ext_resource type="PackedScene" uid="uid://bj0c7fvun52bs" path="res://scenes/selection_indicator.tscn" id="3_1jvru"]
+[ext_resource type="Texture2D" uid="uid://cjcac6myan6e8" path="res://assets/units/infantry/Rocket_Infantry_Blue_32.png" id="1_8ekcq"]
+[ext_resource type="Script" uid="uid://b7jqbd34n2dfb" path="res://scripts/UnitRocketman.cs" id="1_df7gb"]
+[ext_resource type="PackedScene" uid="uid://bj0c7fvun52bs" path="res://scenes/selection_indicator.tscn" id="2_df7gb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k673f"]
 radius = 17.029387
@@ -10,13 +10,13 @@ radius = 17.029387
 [sub_resource type="CircleShape2D" id="CircleShape2D_o7ajc"]
 radius = 68.007355
 
-[node name="Unit" type="CharacterBody2D" groups=["units"]]
-script = ExtResource("1_o7ajc")
+[node name="UnitRocketman" type="CharacterBody2D" groups=["units"]]
+script = ExtResource("1_df7gb")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_k673f")
+texture = ExtResource("1_8ekcq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_k673f")
@@ -30,4 +30,4 @@ shape = SubResource("CircleShape2D_o7ajc")
 [node name="AttackIntervalTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="SelectionIndicator" parent="." instance=ExtResource("3_1jvru")]
+[node name="SelectionIndicator" parent="." instance=ExtResource("2_df7gb")]
