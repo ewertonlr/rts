@@ -8,6 +8,7 @@
 script = ExtResource("1_vg37x")
 Id = "gunner"
 Name = "Gunner"
+Health = 50
 DefaultIcon = ExtResource("1_n7h5j")
 UnitScene = ExtResource("1_xyosj")
 metadata/_custom_type_script = "uid://2b7m7nwd8uxc"

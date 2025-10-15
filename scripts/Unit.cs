@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Dynamic;
 using System.Collections.Generic;
+// using System.Numerics;
 
 [GlobalClass]
 public partial class Unit : CharacterBody2D
@@ -16,13 +17,6 @@ public partial class Unit : CharacterBody2D
     private CollisionShape2D attackRangecollisionShape;
     private Timer attackInvervalTimer;
     private Unit targetUnit;
-
-    public UnitData Data { get; private set; }
-    // public Texture2D Icon => Data?.GetIcon(teamID);
-    public Texture2D Icon => sprite?.Texture;
-    public string Name => Data?.Name ?? "Unknown";
-    public int Cost => Data?.Cost ?? 0;
-
     public enum BehaviorState
     {
         Idle,
@@ -31,14 +25,15 @@ public partial class Unit : CharacterBody2D
     }
     public BehaviorState behaviorState = BehaviorState.Idle;
 
+    public UnitData Data { get; private set; }
 
     [Export(PropertyHint.Range, "1,2")]
     public int teamID = 1;
     private float attackRangeRadius = 0f;
-    private float defaultAttackInterval = 1.0f;
-
+    private float defaultAttackInterval;
     private int health;
     private int attackDamage;
+    private float movementSpeed;
 
     private const string TEAM_COLOR_SHADER_PATH = "uid://nihmenvkqgr0";
     private static readonly Color TARGET_COLOR = new Color(0.3882f, 0.6078f, 1.0f, 1.0f);
@@ -60,19 +55,10 @@ public partial class Unit : CharacterBody2D
         this.attackRangeRadius = circleShape.Radius;
 
         attackInvervalTimer = GetNode<Timer>("AttackIntervalTimer");
-        attackInvervalTimer.WaitTime = defaultAttackInterval;
         attackInvervalTimer.Timeout += OnAttackIntervalTimeout;
 
         if (GameManager.Instance != null)
             Died += GameManager.Instance.OnUnitDied;
-
-        // ApplyTeamShader();
-        // if (Data != null)
-        // {
-        //     // Aplica a textura com base no teamID (se já estiver definido)
-        //     sprite.Texture = Data.SpriteTextureByTeam.GetValueOrDefault(teamID);
-        // }
-        // Log.Info($"Unit {this} created at position {GlobalPosition}");
     }
 
     public override void _PhysicsProcess(double delta)
@@ -111,7 +97,7 @@ public partial class Unit : CharacterBody2D
         ProcessMovement();
     }
 
-    public void Initialize(UnitData data, int teamID)
+    public void Initialize(UnitData data, int teamID, Vector2 rallyPoint)
     {
         if (data == null)
         {
@@ -120,19 +106,29 @@ public partial class Unit : CharacterBody2D
         }
         this.Data = data;
         this.teamID = teamID;
-        health = 100;
-        attackDamage = 10;
+        this.defaultAttackInterval = data.DefaultAttackInterval;
+        this.attackInvervalTimer.WaitTime = this.defaultAttackInterval;
+        this.attackDamage = data.AttackDamage;
+        this.health = data.Health;
+        this.movementSpeed = data.MovementSpeed;
 
         Log.Info($"Init Unit {this} of Team {teamID}");
 
         ApplyTeamShader();
+
+        if (rallyPoint != Vector2.Zero)
+            processRallyPoint(rallyPoint);
     }
 
-
+    public void processRallyPoint(Vector2 rallyPoint)
+    {
+        MoveTo(rallyPoint);
+        SetBehaviorState(BehaviorState.Moving);
+    }
     public void ApplyTeamShader()
     {
-        if (sprite == null)
-            sprite = GetNode<Sprite2D>("Sprite2D");
+        // if (sprite == null)
+        //     sprite = GetNode<Sprite2D>("Sprite2D");
 
         if (teamID == 2)
         {
@@ -176,11 +172,9 @@ public partial class Unit : CharacterBody2D
         if (currentPosition.DistanceTo(nextPathPosition) < 1f)
             return; // Already at the next path position
 
-        //Log.Info($"Unit {this} nextPathPosition {nextPathPosition}");
 
         Vector2 direction = (nextPathPosition - GlobalPosition).Normalized();
-        float speed = 100f; // You can adjust the speed as needed
-        Velocity = direction * speed;
+        Velocity = direction * movementSpeed;
 
         MoveAndSlide();
     }

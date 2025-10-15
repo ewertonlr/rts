@@ -6,19 +6,17 @@ public partial class GameManager : Node
     public static GameManager Instance { get; private set; }
     public List<Unit> AllUnits { get; private set; } = new List<Unit>();
     public Building SelectedBuilding { get; set; } = null;
-    public int LocalPlayerTeamId { get; set; } = 1; // 1 para azul, 2 para vermelho
+    public int LocalPlayerTeamId { get; set; } = 1;
 
     public override void _Ready()
     {
         if (Instance != null)
         {
-            // Log.Error("GameManager já existe. O novo nó será removido.");
             QueueFree();
             return;
         }
 
         Instance = this;
-        // Log.Warn("GameManager inicializado.");
     }
 
     public void AddUnit(Unit unit)
@@ -26,11 +24,6 @@ public partial class GameManager : Node
         if (!AllUnits.Contains(unit))
         {
             AllUnits.Add(unit);
-            // Log.Info($"Unidade {unit} adicionada. Total de unidades: {AllUnits.Count}");
-        }
-        else
-        {
-            // Log.Warn($"Unidade {unit} já está na lista.");
         }
     }
 
@@ -39,12 +32,6 @@ public partial class GameManager : Node
         if (AllUnits.Contains(unit))
         {
             AllUnits.Remove(unit);
-            // unit.SetSelected(false);
-            // Log.Info($"Unidade {unit} removida. Total de unidades: {AllUnits.Count}");
-        }
-        else
-        {
-            // Log.Warn($"Unidade {unit} não encontrada na lista.");
         }
     }
 
@@ -52,7 +39,6 @@ public partial class GameManager : Node
     {
         UnselectAll();
         AllUnits.Clear();
-        // Log.Info("Todas as unidades foram removidas.");
     }
 
     public void UnselectAll()
@@ -82,12 +68,10 @@ public partial class GameManager : Node
         if (SelectedBuilding != null && IsInstanceValid(SelectedBuilding))
         {
             SelectedBuilding.SetSelected(true);
-            // Log.Info($"Building {building} selected.");
         }
         else
         {
             SelectedBuilding = null;
-            // Log.Info("No building selected.");
         }
     }
     public void OnUnitDied(Unit unit)

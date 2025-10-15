@@ -20,12 +20,6 @@ public partial class SelectionManager : Control
 
     public override void _Ready()
     {
-        // PlacedUnits.Add(new Unit(new Vector2(100, 50)));
-        // PlacedUnits.Add(new Unit(new Vector2(300, 150)));
-        // PlacedUnits.Add(new Unit(new Vector2(500, 250)));
-        // PlacedUnits.Add(new Unit(new Vector2(700, 350)));
-        // PlacedUnits.Add(new Unit(new Vector2(900, 450)));
-
         buildingManagerUi = GetNode<BuildingManagerUi>("%BuildingManagerUI");
 
         if (buildingManagerUi != null)
@@ -48,28 +42,22 @@ public partial class SelectionManager : Control
                 selectionRect = new ColorRect();
                 selectionRect.Color = new Color(Colors.Blue, 0.4f);
                 AddChild(selectionRect);
-
-                // Log.Debug("Left mouse button clicked at position: " + startDraggingPosition);
-
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Left && !mouseEvent.Pressed)
             {
-
                 Control hoveredControl = GetViewport().GuiGetHoveredControl();
-                // Log.Info($"Finalizing selection XXXXXXXX...{hoveredControl}");
 
                 if (hoveredControl == null)
+                {
                     GameManager.Instance.RemoveAllUnits();
-
-                EmitSignal(SignalName.BuildingUnselected);
+                    EmitSignal(SignalName.BuildingUnselected);
+                }
 
                 Vector2 finalPosition = GetGlobalMousePosition();
                 Vector2 size = finalPosition - startDraggingPosition;
                 Rect2 finalRect = new Rect2(startDraggingPosition, size).Abs();
 
                 PlacedUnits = GetAllUnitsFromGroup();
-
-                // Log.Info($"Placed Units: {PlacedUnits.Count}, Placed Buildings: {PlacedBuildings.Count}");
 
                 PlacedUnits.ForEach(unit =>
                 {
@@ -99,13 +87,9 @@ public partial class SelectionManager : Control
                     });
                 }
 
-                // Log.Info($"Unit List has {GameManager.Instance.AllUnits.Count} units after the selection.");
-
                 isDragging = false;
                 selectionRect?.QueueFree();
                 selectionRect = null;
-
-                // Log.Debug("Left mouse button released at position: " + GetGlobalMousePosition());
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Right && mouseEvent.Pressed)
             {
@@ -116,7 +100,8 @@ public partial class SelectionManager : Control
                 {
                     Unit unit = GameManager.Instance.AllUnits[i];
 
-                    int row = i / 5; // Assuming 5 units per row
+                    // Assuming 5 units per row
+                    int row = i / 5;
                     int col = i % 5;
                     Vector2 gridOffset = new Vector2(col * spacing, row * spacing);
 
@@ -124,8 +109,6 @@ public partial class SelectionManager : Control
 
                     unit.MoveTo(moveToPosition);
                     unit.SetBehaviorState(Unit.BehaviorState.Moving);
-
-                    // Log.Info($"Moving unit {unit} to position {moveToPosition}");
                 }
             }
         }
@@ -139,9 +122,6 @@ public partial class SelectionManager : Control
 
                 selectionRect.GlobalPosition = minPos;
                 selectionRect.Size = (currentMousePosition - startDraggingPosition).Abs();
-
-                // Log.Debug("Dragging... Current selection rectangle: " + selectionRect);
-
             }
         }
     }

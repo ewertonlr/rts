@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
+// using System.Numerics;
 using System.Runtime.Intrinsics.Wasm;
 
 public partial class Building : StaticBody2D
@@ -8,7 +9,7 @@ public partial class Building : StaticBody2D
     private Timer productionTimer;
 
     public PackedScene unitScene = GD.Load<PackedScene>("uid://b42ek7rmo23nq");
-    // public List<PackedScene> availableUnits = new List<PackedScene>();
+
     [Export]
     public int[] ProduceableUnitIDs = new int[] { 1 }; // IDs of units this building can produce
 
@@ -22,6 +23,7 @@ public partial class Building : StaticBody2D
 
     private float productionInterval = 1.0f;
     private int productionQueueLimit = 5;
+    private Vector2 rallyPoint = Vector2.Zero;
 
     public override void _Ready()
     {
@@ -32,55 +34,11 @@ public partial class Building : StaticBody2D
         productionTimer.Timeout += OnProductionTimerTimeout;
         productionTimer.WaitTime = productionInterval;
 
-        // LoadAvailableUnitData();
-
-        // availableUnits.Add(unitScene);
-        // // TODO: Testing Purposes
-        // availableUnits.Add(unitScene);
-        // availableUnits.Add(unitScene);
-        // availableUnits.Add(unitScene);
-        // availableUnits.Add(unitScene);
-        // availableUnits.Add(unitScene);
-
-        // TODO: Testing Purposes
-        // AddToProductionQueue(unitScene);
-        // AddToProductionQueue(unitScene);
-        // AddToProductionQueue(unitScene);
-        // AddToProductionQueue(unitScene);
-        // AddToProductionQueue(unitScene);
-        // AddToProductionQueue(unitScene);
-        // TryStartProduction(); // TEMP FOR TESTING
-    }
-
-    private void LoadAvailableUnitData()
-    {
-        // Limpa a lista antes de preencher
-        AvailableUnits.Clear();
-
-        if (GameDataCatalog.Instance == null)
-        {
-            Log.Error("GameDataCatalog não está pronto!");
-            return;
-        }
-
-        foreach (int unitId in ProduceableUnitIDs)
-        {
-            UnitData data = GameDataCatalog.Instance.GetUnitData(unitId);
-            if (data != null)
-            {
-                AvailableUnits.Add(data);
-            }
-        }
-        Log.Info($"Building carregou {AvailableUnits.Count} tipos de unidades para produção.");
+        rallyPoint = GlobalPosition + new Vector2(0, 200);
     }
 
     public void AddToProductionQueue(UnitData unitData)
     {
-        // if (AvailableUnits.Contains(unitScene) == false)
-        // {
-        //     Log.Info("Unidade não disponível para produção.");
-        //     return;
-        // }
         if (productionQueue.Count >= productionQueueLimit)
         {
             Log.Info("Fila de produção cheia.");
@@ -102,7 +60,7 @@ public partial class Building : StaticBody2D
         }
     }
 
-    public void ProduceUnit()
+    public async void ProduceUnit()
     {
         if (productionQueue.Count == 0)
         {
@@ -115,12 +73,19 @@ public partial class Building : StaticBody2D
         currentProduction = null;
 
         Unit newUnit = unitData.UnitScene.Instantiate<Unit>();
+        GetParent().AddChild(newUnit);
+        newUnit.GlobalPosition = this.GlobalPosition;
+        newUnit.Initialize(unitData, 1, rallyPoint + new Vector2(-200, 0));
+
+        // TODO Additional unit from other team for testing
+        await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
+
+        Unit newEnemyUnit = unitData.UnitScene.Instantiate<Unit>();
+        GetParent().AddChild(newEnemyUnit);
+        newEnemyUnit.GlobalPosition = this.GlobalPosition;
+        newEnemyUnit.Initialize(unitData, 2, rallyPoint + new Vector2(200, 0));
 
         // newUnit.Initialize(GameDataCatalog.Instance.GetUnitData(1), 1);
-        newUnit.Initialize(unitData, 2);
-
-        newUnit.GlobalPosition = this.GlobalPosition + new Vector2(50, 0);
-        GetParent().AddChild(newUnit);
 
         TryStartProduction();
     }

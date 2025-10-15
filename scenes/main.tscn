@@ -1,14 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://cgnajk7k8rksn"]
+[gd_scene load_steps=6 format=3 uid="uid://cgnajk7k8rksn"]
 
 [ext_resource type="Script" uid="uid://bitjd4wmk3rmv" path="res://scripts/Main.cs" id="1_o5qli"]
 [ext_resource type="PackedScene" uid="uid://4rrskhxjuiyf" path="res://scenes/selection_manager.tscn" id="2_0wfyh"]
-[ext_resource type="PackedScene" uid="uid://b42ek7rmo23nq" path="res://scenes/unit.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://cm4obc1qjvwp6" path="res://scenes/building_manager_ui.tscn" id="3_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://757kle2ca63q" path="res://scenes/building.tscn" id="4_jyhfs"]
-[ext_resource type="PackedScene" uid="uid://drgoedq61ns4w" path="res://scenes/unit_engineer.tscn" id="5_tbgi4"]
-[ext_resource type="PackedScene" uid="uid://cn71c6o3co4d0" path="res://scenes/unit_gunner.tscn" id="6_tipki"]
-[ext_resource type="PackedScene" uid="uid://tq5uo58lis8s" path="res://scenes/unit_rocketman.tscn" id="7_85g3d"]
-[ext_resource type="PackedScene" uid="uid://ct0g3348gmgda" path="res://scenes/unit_tank.tscn" id="8_choun"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_sugp2"]
 vertices = PackedVector2Array(548, -297.0078, 548, 296.1328, -558.9297, 310.85938, -555.0625, -298.97656)
@@ -23,6 +18,10 @@ unique_name_in_owner = true
 
 [node name="BuildingManagerUI" parent="." instance=ExtResource("3_tbgi4")]
 unique_name_in_owner = true
+offset_left = 281.0
+offset_top = 101.0
+offset_right = 281.0
+offset_bottom = 101.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -31,19 +30,4 @@ visible = false
 navigation_polygon = SubResource("NavigationPolygon_sugp2")
 
 [node name="Building" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(-133, -67)
-
-[node name="Unit" parent="." instance=ExtResource("3_sugp2")]
-position = Vector2(-240, 138)
-
-[node name="UnitEngineer" parent="." instance=ExtResource("5_tbgi4")]
-position = Vector2(-477, -74)
-
-[node name="UnitGunner" parent="." instance=ExtResource("6_tipki")]
-position = Vector2(-475, -201)
-
-[node name="UnitRocketman" parent="." instance=ExtResource("7_85g3d")]
-position = Vector2(-487, 43)
-
-[node name="UnitTank" parent="." instance=ExtResource("8_choun")]
-position = Vector2(-479, 173)
+position = Vector2(-118, -82)
