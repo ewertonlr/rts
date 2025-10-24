@@ -1,5 +1,6 @@
 using Godot;
 using System.Collections.Generic;
+using System.Numerics;
 
 public partial class GameManager : Node
 {
@@ -7,6 +8,7 @@ public partial class GameManager : Node
     public List<Unit> AllUnits { get; private set; } = new List<Unit>();
     public Building SelectedBuilding { get; set; } = null;
     public int LocalPlayerTeamId { get; set; } = 1;
+    public PackedScene buildingScene = GD.Load<PackedScene>("uid://757kle2ca63q");
 
     public override void _Ready()
     {
@@ -73,6 +75,14 @@ public partial class GameManager : Node
         {
             SelectedBuilding = null;
         }
+    }
+
+    public Building GetGhostBuilding()
+    {
+        Building ghostBuilding = buildingScene.Instantiate<Building>();
+        // ghostBuilding.GlobalPosition = placementPosition;
+        // AddChild(ghostBuilding);
+        return ghostBuilding;
     }
     public void OnUnitDied(Unit unit)
     {

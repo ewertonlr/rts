@@ -17,6 +17,7 @@ public partial class SelectionManager : Control
     // TODO: Temporary test for unit selection
     public List<Unit> PlacedUnits { get; private set; } = new List<Unit>();
     public List<Building> PlacedBuildings { get; private set; } = new List<Building>();
+    public Building ghostBuilding = null;
 
     public override void _Ready()
     {
@@ -31,12 +32,34 @@ public partial class SelectionManager : Control
         Log.Info($"SelectionManager is Ready with {PlacedUnits.Count} units placed.");
     }
 
+    public override void _PhysicsProcess(double delta)
+    {
+        if (ghostBuilding != null)
+        {
+            ghostBuilding.GlobalPosition = GetGlobalMousePosition();
+        }
+    }
     public override void _Input(InputEvent @event)
     {
+        if (@event is InputEventKey keyEvent && !keyEvent.Pressed && keyEvent.AsTextPhysicalKeycode() == "B")
+        {
+            // Godot.Vector2 mousePosition = GetGlobalMousePosition();
+            Log.Warn($"Place Building!");
+            // Log.Warn($"Mouse at => {mousePosition}");
+
+            // GameManager.Instance.SetGhostBuilding(mousePosition);
+            ghostBuilding = GameManager.Instance.GetGhostBuilding();
+            AddChild(ghostBuilding);
+
+        }
+
         if (@event is InputEventMouseButton mouseEvent)
         {
             if (mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
             {
+                if (ghostBuilding != null)
+                    return;
+
                 startDraggingPosition = GetGlobalMousePosition();
                 isDragging = true;
                 selectionRect = new ColorRect();
@@ -45,6 +68,12 @@ public partial class SelectionManager : Control
             }
             else if (mouseEvent.ButtonIndex == MouseButton.Left && !mouseEvent.Pressed)
             {
+                if (ghostBuilding != null)
+                {
+                    ghostBuilding = null;
+                    return;
+                }
+
                 Control hoveredControl = GetViewport().GuiGetHoveredControl();
 
                 if (hoveredControl == null)
@@ -143,4 +172,5 @@ public partial class SelectionManager : Control
 
         return allBuildings;
     }
+
 }
